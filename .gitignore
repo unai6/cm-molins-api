@@ -1,0 +1,34 @@
+*.bak
+pm2*
+logs/
+nodemon*
+nodemon.json
+uploads/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directories
+node_modules
+jspm_packages
+
+# Optional npm cache directory
+.npm
+
+# mac files
+.DS_Store
+
+# lock files
+yarn.lock
+
+# vscode
+.vscode
+*code-workspace
+.VSCodeCounter
