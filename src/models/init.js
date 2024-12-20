@@ -1,12 +1,19 @@
 'use strict'
 
-const fs = require('fs')
+import fs from 'fs'
+import path from 'path'
+
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const modelFileList = fs.readdirSync('./src/models/').filter(fn => fn.endsWith('.model.js'))
 
-module.exports = function () {
+export default async function () {
   for (const model of modelFileList) {
     if (process.env.NODE_ENV === 'development') console.info('Initializing:', model)
-    require(`${__dirname}/${model}`)
+    await import(resolve(__dirname, model))
   }
 }

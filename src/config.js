@@ -16,8 +16,7 @@ const config = {
       length: 10,
       alphabet: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     },
-}
+  }
 }
 
-
-module.exports = config
+export default config

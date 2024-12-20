@@ -1,8 +1,10 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+import { model, Schema } from 'mongoose'
 
-const nanoid = require('nanoid')
-const newId = nanoid.customAlphabet(config.nanoid.alphabet, config.nanoid.length)
+import { customAlphabet } from 'nanoid'
+
+import config from '../config.js'
+
+const newId = customAlphabet(config.nanoid.alphabet, config.nanoid.length)
 
 const InvesteeSchema = new Schema({
   _id: { type: String, default: () => newId() },
@@ -21,4 +23,4 @@ const InvesteeSchema = new Schema({
   },
 })
 
-module.exports = mongoose.model('Investee', InvesteeSchema)
+export default model('Investee', InvesteeSchema)

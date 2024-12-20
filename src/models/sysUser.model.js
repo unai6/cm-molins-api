@@ -1,9 +1,10 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+import { model, Schema } from 'mongoose'
 
+import { customAlphabet } from 'nanoid'
 
-const nanoid = require('nanoid')
-const newId = nanoid.customAlphabet(config.nanoid.alphabet, config.nanoid.length)
+import config from '../config.js'
+
+const newId = customAlphabet(config.nanoid.alphabet, config.nanoid.length)
 
 const SysUserSchema = new Schema({
   _id: { type: String, default: () => newId() },
@@ -14,3 +15,5 @@ const SysUserSchema = new Schema({
   isActive: { type: Boolean, required: true },
   lastSessionAt: { type: Date },
 })
+
+export default model('SysUser', SysUserSchema)

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "carteracm-api",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "npm run test",
     "start": "node index.js",

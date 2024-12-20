@@ -1,7 +1,7 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 // Run the server
-async function start () {
+export async function start () {
   try {
     // Connect to MongoDB first.
     mongoose.set('strictQuery', true)
@@ -9,7 +9,7 @@ async function start () {
     console.info('\n==> Connected to MongoDB.\n')
 
     // Since fastifyApp requires the connection to MongoDB to be established, we require it here exceptionally.
-    const fastifyApp = require('./app')
+    const {  fastify: fastifyApp } = await import('./app.js')
 
     // Then start listening on the specific port.
     await fastifyApp.listen({ port: process.env.PORT || 80 })
@@ -26,5 +26,3 @@ async function start () {
     process.exit(1)
   }
 }
-
-module.exports = { start }
