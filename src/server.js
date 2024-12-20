@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 // Run the server
-const start = async () => {
+async function start () {
   try {
     // Connect to MongoDB first.
     mongoose.set('strictQuery', true)

@@ -72,7 +72,7 @@ fastify.register(autoload, {
   matchFilter: (path) => path.endsWith('.routes.js'),
 })
 
-const gracefulExit = async function () {
+async function gracefulExit () {
   console.info('  >> Graceful exit. Mongoose connection status:', mongoose.connection.readyState)
   if (mongoose.connection.readyState === 1) {
     // This means that the connection is established and we can safely close it.
