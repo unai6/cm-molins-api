@@ -20,12 +20,12 @@ export async function getToken (req, reply) {
   if (!email || !password) return reply.badRequest('Email and password are required.')
 
   try {
-    let user = await Counselors.findOne({ email }).lean()
+    let user = await Counselors.findOne({ email })
     if (!user) {
-      user = await SysUsers.findOne({ email }).lean()
+      user = await SysUsers.findOne({ email })
     }
 
-    if (!user || user.role) return reply.unauthorized('User not found.')
+    if (!user || !user.role) return reply.unauthorized('User not found.')
 
     const userMeta = await UsersMetadata.findOne({ userId: user._id }).select('+password').lean()
     if (!userMeta) return reply.unauthorized('User not found.')
@@ -48,14 +48,14 @@ export async function getToken (req, reply) {
       sub: user._id,
     }
 
-    const token = jwt.sign(payload, process.env.API_SECRET, { expiration: config.tokens.accessTokenExpiration })
-    const refreshToken = jwt.sign(refreshTokenPayload, process.env.API_SECRET, { expiration: config.tokens.refreshTokenExpiration })
+    const token = jwt.sign(payload, process.env.API_SECRET, { expiresIn: config.tokens.accessTokenExpiration })
+    const refreshToken = jwt.sign(refreshTokenPayload, process.env.API_SECRET, { expiresIn: config.tokens.refreshTokenExpiration })
 
     // Update lastSessionAt for user.
     user.lastSessionAt = new Date()
     await user.save()
 
-    console.info(' Access token for', user._id, user.role)
+    console.info(' --> Access token for', user._id, user.role)
 
     return { token, refreshToken }
   } catch (err) {

@@ -1,7 +1,7 @@
-import mongoose, { set } from 'mongoose'
+import mongoose from 'mongoose'
 
 import autoload from '@fastify/autoload'
-// import tokenHandlers from './shared/token.handlers'
+import { verifyToken, authorize } from './api/token.handlers.js'
 import { logTokens } from './services/authorization.service.js'
 import initModels from './models/init.js'
 import { createStream } from '@binxhealth/pino-stackdriver'
@@ -16,6 +16,7 @@ import config from './config.js'
 
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+
 
 // Initialize Mongoose models.
 initModels()
@@ -70,8 +71,8 @@ fastify.ready(err => {
 })
 
 // Add global Hooks
-// fastify.addHook('onRequest', tokenHandlers.verifyToken)
-// fastify.addHook('onRequest', tokenHandlers.authorize)
+fastify.addHook('onRequest', verifyToken)
+fastify.addHook('onRequest', authorize)
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

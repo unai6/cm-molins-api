@@ -10,6 +10,7 @@ import { sendCreateUserEmail } from '../../services/notification.service.js'
 const SysUsers = mongoose.model('SysUser')
 const UsersMetadata = mongoose.model('UserMetadata')
 
+// --------------------
 export async function createSysUser (req, reply) {
   const { email, givenName, familyName } = req.body
   if (!email) return reply.badRequest('Email and password are required.')
@@ -47,4 +48,44 @@ export async function createSysUser (req, reply) {
   await sendCreateUserEmail(user)
 
   return user
+}
+
+
+// --------------------
+export async function getSysUser (req, reply) {
+  const { userId } = req.params
+
+  try {
+    const user = await SysUsers.findById(userId).lean()
+    if (!user) return reply.notFound('User not found.')
+
+    return user
+  } catch (err) {
+    console.error(' !! Could not get sysUser', err)
+    return reply.internalServerError(err)
+  }
+}
+
+
+// --------------------
+export async function updateSysUser (req, reply) {
+  const { userId } = req.params
+  const { givenName, familyName, email, isNotActive } = req.body
+
+  const newData = {
+    givenName,
+    familyName,
+    email,
+    isNotActive,
+  }
+
+  try {
+    const user = await SysUsers.findOneAndUpdate({ _id: userId }, { $set: newData }, { new: true })
+    if (!user) return reply.notFound('User not found.')
+
+    return user
+  } catch (err) {
+    console.error(' !! Could not update sysUser', err)
+    return reply.internalServerError(err)
+  }
 }

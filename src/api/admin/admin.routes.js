@@ -1,12 +1,15 @@
-import { createSysUser } from './admin.handlers.js'
+import { createSysUser, getSysUser, updateSysUser } from './admin.handlers.js'
+
+import { configAllowance } from '../../services/authorization.service.js'
+import config from '../../config.js'
 
 async function routes (fastify, opts) {
-  // Set global authorization config
-  // opts.config = configAllowance(allow.admins)
-  // // TODO: this is a temporary generic assigment of tags. To be completed in a granular, per route basis.
-  // opts.schema = { tags: ['admin-coupons'] }
+  // Set global authorization config.
+  opts.config = configAllowance(config.roleGroups.admin)
 
-  fastify.post('/', createSysUser)
+  fastify.post('/', { ...opts }, createSysUser)
+  fastify.get('/:userId', { ...opts }, getSysUser)
+  fastify.put('/:userId', { ...opts }, updateSysUser)
 }
 
 export default routes

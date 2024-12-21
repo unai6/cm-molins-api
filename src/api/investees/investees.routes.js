@@ -1,10 +1,11 @@
-async function routes (fastify, opts) {
-  // Set global authorization config
-  // opts.config = configAllowance(allow.admins)
-  // // TODO: this is a temporary generic assigment of tags. To be completed in a granular, per route basis.
-  // opts.schema = { tags: ['admin-coupons'] }
+import { configAllowance } from '../../services/authorization.service.js'
+import config from '../../config.js'
 
-  fastify.get('/', async (request, reply) => {
+async function routes (fastify, opts) {
+  // Set global authorization config.
+  opts.config = configAllowance(config.roleGroups.admin)
+
+  fastify.post('/', async (request, reply) => {
     return { hello: 'world' }
   })
 }

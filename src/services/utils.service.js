@@ -21,7 +21,7 @@ export async function sendNotificationEmail (emailData, options = { isNoReply: f
     return null
   }
 
-  const { email: emailTo, name: nameTo, subject: emailSubject, ...params } = emailData
+  const { email: emailTo, name: nameTo, familyName: familyNameTo, subject: emailSubject, ...params } = emailData
 
   const subjectPrefix = process.env.NODE_ENV !== 'production' ? 'TEST - ' : ''
 
@@ -31,7 +31,7 @@ export async function sendNotificationEmail (emailData, options = { isNoReply: f
       replyTo: { name: 'Cartera C.M', email: 'unaigoe91@gmail.com' },
       to: [{ email: emailTo, name: nameTo }],
       templateId: config.brevo.template.notification,
-      params,
+      params: { items: [{ ...params, name: nameTo, familyName: familyNameTo }]},
       subject: `${subjectPrefix}${emailSubject}`,
     },
     {

@@ -9,7 +9,6 @@ export async function verifyToken (req, reply) {
   // All requests go through this hook. If the token is not valid or doesn't have a role, it is rejected.
   // If it is valid, data is extracted from it and added to the req object for subsequent calls.
   try {
-
     // Do not verify token if explicitly specified as verifyToken is set as global hook and some endpoint requests do not require token.
     if (req.routeOptions.config?.verifyToken === false) return
 
@@ -31,9 +30,9 @@ export async function verifyToken (req, reply) {
 
 
 // --------------------
-export function authorize (req, reply) {
-  const { role: authorizedRole = [], reason } = req.routeOptions.config?.authorize || {}
-  const userRole = req.user?.role|| []
+export function authorize (req, reply, done) {
+  const { role: authorizedRole, reason } = req.routeOptions.config?.authorize || {}
+  const userRole = req.user?.role || 'guest'
 
   // If authorizedRole only contains '*', always allow the request.
   if (authorizedRole === '*') return
@@ -43,4 +42,6 @@ export function authorize (req, reply) {
     reply.forbidden()
     return reply
   }
+
+  done()
 }

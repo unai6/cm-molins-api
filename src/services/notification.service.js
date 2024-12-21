@@ -42,6 +42,7 @@ export async function sendCreateUserEmail (userData) {
 
     const emailData = {
       name: userData.givenName,
+      familyName: userData.familyName,
       email: userData.email,
       locale,
       subject: 'Subject',
