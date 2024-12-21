@@ -7,23 +7,23 @@ import * as cloudinary from 'cloudinary'
 const Investees = mongoose.model('Investee')
 
 // --------------------
-async function createInvestee (req, reply) {
+export async function createInvestee (req, reply) {
   const { name, type, investedAt, disinvestedAt, category, websiteUrl, headquarters, description = {} } = req.body
-  // const { es, en, ca } = description
+
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  })
+
   try {
     const isExistingInvestee = await Investees.exists({ name })
     if (isExistingInvestee) return reply.conflict('Investee already exists.')
 
-
-    const parts = req.parts()
-    let logoUrl
-
-    for (const part of parts) {
-      if (part.file) {
-        const formData = new FormData()
-        formData.append('file', part.file, { filename: part.filename })
-      }
-    }
+    const file = await req.file()
+    const uploadResult = await cloudinary.uploader.upload(file.filepath, {
+      folder: 'cartera/investees'
+    })
 
     const investee = new Investees({
       name,
@@ -32,9 +32,12 @@ async function createInvestee (req, reply) {
       disinvestedAt,
       category,
       websiteUrl,
+      logoUrl: uploadResult.secure_url,
       headquarters,
       description,
     })
+
+    await investee.save()
 
   } catch (err) {
     console.error(' !! Could not create investee', err)
