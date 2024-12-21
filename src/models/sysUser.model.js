@@ -13,7 +13,7 @@ const SysUserSchema = new Schema({
   email: { type: String, required: true, lowercase: true },
   country: { type: String, required: true },
   role: { type: String, required: true },
-  isActive: { type: Boolean, required: true },
+  isNotActive: { type: Boolean },
   lastSessionAt: { type: Date },
 },
 {

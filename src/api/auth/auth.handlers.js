@@ -30,7 +30,7 @@ export async function getToken (req, reply) {
     const userMeta = await UsersMetadata.findOne({ userId: user._id }).select('+password').lean()
     if (!userMeta) return reply.unauthorized('User not found.')
 
-    if (!user.isActive) {
+    if (user.isNotActive) {
       // If user account is not active, return forbidden.
       console.error('  !! User is not active:', user)
       return reply.forbidden('User is not active.')
@@ -91,7 +91,7 @@ export async function refreshToken (req, reply) {
       return reply.notFound('User metadata not found')
     }
 
-    if (!user.isActive) {
+    if (user.isNotActive) {
       // If user account is not active, return forbidden.
       console.error('  !! User is not active:', user)
       return reply.forbidden('User is not active.')
@@ -121,11 +121,11 @@ export async function requestResetPassword (req, reply) {
   if (!email) return reply.badRequest('Email is required.')
 
   try {
-    let user = await Counselors.findOne({ email, isActive: true }).lean()
+    let user = await Counselors.findOne({ email, isNotActive: { $ne: true } }).lean()
     if (user) {
       user.role = 'counselor'
     } else {
-      user = await SysUsers.findOne({ email, isActive: true }).lean()
+      user = await SysUsers.findOne({ email, isNotActive: { $ne: true }  }).lean()
     }
 
     if (!user || !user.role) return reply.unauthorized('User not found.')
@@ -150,9 +150,9 @@ export async function resetPassword (req, reply) {
   if (!email || !password || !token) return reply.badRequest('Missing information.')
 
   try {
-    let user = await Counselors.findOne({ email, isActive: true }).lean()
+    let user = await Counselors.findOne({ email, isNotActive: { $ne: true }  }).lean()
     if (!user) {
-      user = await SysUsers.findOne({ email, isActive: true }).lean()
+      user = await SysUsers.findOne({ email, isNotActive: { $ne: true }  }).lean()
     }
 
     if (!user || !user.role) return reply.unauthorized('User not found.')

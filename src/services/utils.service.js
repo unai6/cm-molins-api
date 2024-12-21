@@ -1,6 +1,18 @@
+'use strict'
+
 import axios from 'axios'
 
+import { customAlphabet } from 'nanoid'
+
 import config from '../config.js'
+
+// Password generation consts and function (defined here as it will be used extensively).
+const numbers = '0123456789'
+const alpha = 'abcdefghijklmnopqrstuvwxyz'
+const upperCaseAlpha = alpha.toUpperCase()
+const specialChars = '!@#&'
+const allChars = numbers + alpha + upperCaseAlpha + specialChars
+const newPassword = customAlphabet(allChars, 12)
 
 export async function sendNotificationEmail (emailData, options = { isNoReply: false, template: 'default' }) {
   // If this is a test email, don't send it.
@@ -37,4 +49,15 @@ export async function sendNotificationEmail (emailData, options = { isNoReply: f
     console.error('     statusText:', err.response?.statusText, '\n')
     throw err
   }
+}
+
+// --------------------
+export function generateStrongPassword () {
+  let password = newPassword()
+  // A bit of a brute force approach, but we're using it for the sake of code simplicity.
+  while (!config.strongPassword.test(password)) {
+    password = newPassword()
+  }
+
+  return password
 }

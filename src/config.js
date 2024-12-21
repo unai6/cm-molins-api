@@ -3,6 +3,7 @@ const config = {
   tokens: {
     accessTokenExpiration: '45 minutes',
     refreshTokenExpiration: '30 days',
+    newSysUserTokenExpiration: '24 hours',
   },
   // API prefix depending on environment
   apiPrefix: {
@@ -36,6 +37,9 @@ const config = {
       notification: 1,
     }
   },
+  // Password
+  // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:
+  strongPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/,
 }
 
 export default config
