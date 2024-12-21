@@ -1,5 +1,10 @@
 const config = {
-// API prefix depending on environment
+  //Tokens
+  tokens: {
+    accessTokenExpiration: '45 minutes',
+    refreshTokenExpiration: '30 days',
+  },
+  // API prefix depending on environment
   apiPrefix: {
     development: '/api-v1',
     staging: '/v1',
@@ -16,7 +21,21 @@ const config = {
       length: 10,
       alphabet: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     },
-  }
+  },
+  roleList: ['admin', 'counselor'], // Ordered by hierarchy.
+  roleGroups: {
+    guest: { role: 'guest' },
+    authenticated: { role: 'authenticated', reason: 'allowAuthenticatedOnly -- Access not authorized' },
+    admin: { role: 'admin', reason: 'allowAdminsOnly -- Access not authorized' },
+    counselor: { role: 'counselor', reason: 'allowCounselorsOnly -- Access not authorized' },
+  },
+  //Mailing
+  brevo: {
+    endpoint: 'https://api.brevo.com/v3/smtp/email',
+    template: {
+      notification: 1,
+    }
+  },
 }
 
 export default config

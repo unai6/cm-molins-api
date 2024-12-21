@@ -6,7 +6,7 @@ import config from '../config.js'
 
 const newId = customAlphabet(config.nanoid.alphabet, config.nanoid.length)
 
-const SysUserSchema = new Schema({
+const CounselorSchema = new Schema({
   _id: { type: String, default: () => newId() },
   givenName: { type: String, required: true },
   familyName: { type: String, required: true },
@@ -17,7 +17,7 @@ const SysUserSchema = new Schema({
   lastSessionAt: { type: Date },
 },
 {
-  collection: 'sysusers',
+  collection: 'counselors',
   timestamps: true,
   // User info is important -- specify write concern of 'majority'.
   writeConcern: { w: 'majority', j: true, wtimeout: 5000 },
@@ -27,4 +27,4 @@ const SysUserSchema = new Schema({
   toObject: { versionKey: false },
 })
 
-export default model('SysUser', SysUserSchema)
+export default model('Counselor', CounselorSchema)

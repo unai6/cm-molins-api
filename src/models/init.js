@@ -1,7 +1,6 @@
 'use strict'
 
 import fs from 'fs'
-import path from 'path'
 
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
@@ -14,6 +13,6 @@ const modelFileList = fs.readdirSync('./src/models/').filter(fn => fn.endsWith('
 export default async function () {
   for (const model of modelFileList) {
     if (process.env.NODE_ENV === 'development') console.info('Initializing:', model)
-    await import(resolve(__dirname, model))
+      import(resolve(__dirname, model))
   }
 }
