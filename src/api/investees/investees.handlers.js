@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose'
 
-import * as cloudinary from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 
 const Investees = mongoose.model('Investee')
 
