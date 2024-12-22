@@ -39,6 +39,8 @@ export async function createInvestee (req, reply) {
 
     await investee.save()
 
+    return investee
+
   } catch (err) {
     console.error(' !! Could not create investee', err)
     return reply.internalServerError(err)
