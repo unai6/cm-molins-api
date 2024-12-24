@@ -99,7 +99,7 @@ export async function refreshToken (req, reply) {
 
     const payload = {
       sub: user._id,
-      roles: user.roles,
+      role: user.role,
     }
 
     const token = jwt.sign(payload, process.env.API_SECRET, { expiresIn: config.tokens.accessTokenExpiration })

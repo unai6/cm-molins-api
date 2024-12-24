@@ -15,6 +15,7 @@ const InvesteeSchema = new Schema({
   category: { type: String, required: true },
   websiteUrl: { type: String, required: true },
   logoUrl: { type: String, required: true },
+  publicId: { type: String, required: true },
   headquarters: { type: String, required: true },
   description: {
     es: { type: String, required: true },

@@ -2,28 +2,30 @@
 
 import mongoose from 'mongoose'
 
-import { v2 as cloudinary } from 'cloudinary'
+import { uploadImage, deleteImage } from '../../services/utils.service.js'
 
 const Investees = mongoose.model('Investee')
 
 // --------------------
 export async function createInvestee (req, reply) {
-  const { name, type, investedAt, disinvestedAt, category, websiteUrl, headquarters, description = {} } = req.body
-
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  })
-
   try {
+    const file = await req.file()
+
+    const { investeeData, investeeFile } = file.fields
+
+    if (!investeeData || !investeeFile) return reply.badRequest('Missing investee data or file.')
+
+    const { name, type, investedAt, disinvestedAt, category, websiteUrl, headquarters, description = {} } = JSON.parse(file.fields?.investeeData?.value || '')
+
     const isExistingInvestee = await Investees.exists({ name })
     if (isExistingInvestee) return reply.conflict('Investee already exists.')
 
-    const file = await req.file()
-    const uploadResult = await cloudinary.uploader.upload(file.filepath, {
-      folder: 'cartera/investees'
-    })
+    const buffer = await file.fields.investeeFile.toBuffer()
+
+    const folder = 'carteracm/investees'
+    const uploadImageResult = await uploadImage(buffer, folder, investeeFile.filename)
+
+    // await deleteImage(uploadImageResult.public_id)
 
     const investee = new Investees({
       name,
@@ -32,7 +34,8 @@ export async function createInvestee (req, reply) {
       disinvestedAt,
       category,
       websiteUrl,
-      logoUrl: uploadResult.secure_url,
+      logoUrl: uploadImageResult.secure_url,
+      publicId: uploadImageResult.public_id,
       headquarters,
       description,
     })
@@ -43,6 +46,24 @@ export async function createInvestee (req, reply) {
 
   } catch (err) {
     console.error(' !! Could not create investee', err)
+    return reply.internalServerError(err)
+  }
+}
+
+// --------------------
+export async function deleteInvestee (req, reply) {
+  try {
+    const { investeeId } = req.params
+
+    const investee = await Investees.findOneAndDelete({ _id: investeeId })
+    if (!investee) return reply.notFound('Investee not found.')
+
+    await deleteImage(investee.publicId)
+
+    return { msg: 'Ok' }
+
+  } catch (err) {
+    console.error(' !! Could not delete investee', err)
     return reply.internalServerError(err)
   }
 }

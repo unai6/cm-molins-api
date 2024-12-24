@@ -1,10 +1,17 @@
 'use strict'
 
 import axios from 'axios'
-
+import streamifier from 'streamifier'
+import { v2 as cloudinary } from 'cloudinary'
 import { customAlphabet } from 'nanoid'
 
 import config from '../config.js'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 // Password generation consts and function (defined here as it will be used extensively).
 const numbers = '0123456789'
@@ -60,4 +67,30 @@ export function generateStrongPassword () {
   }
 
   return password
+}
+
+// --------------------
+export async function uploadImage (buffer, folder, imageName) {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        upload_preset: 'ml_default',
+        public_id: imageName,
+      },
+      (error, result) => {
+        if (result) resolve(result)
+        else reject(error)
+      },
+    )
+
+    streamifier.createReadStream(buffer).pipe(uploadStream)
+  })
+}
+
+// --------------------
+export async function deleteImage (publicId) {
+  const result = await cloudinary.uploader.destroy(publicId)
+
+  return result
 }
