@@ -12,7 +12,6 @@ const InvesteeSchema = new Schema({
   type: { type: String, required: true, enum: ['startup', 'industry', 'realState', 'finance'] },
   investedAt: { type: String, required: true },
   disinvestedAt: { type: String },
-  category: { type: String, required: true },
   websiteUrl: { type: String, required: true },
   logoUrl: { type: String, required: true },
   publicId: { type: String, required: true },

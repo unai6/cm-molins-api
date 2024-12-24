@@ -7,6 +7,24 @@ import { uploadImage, deleteImage } from '../../services/utils.service.js'
 const Investees = mongoose.model('Investee')
 
 // --------------------
+export async function getInvestees (req, reply) {
+  try {
+    const { type } = req.query
+
+    const filter = {}
+
+    if (type) filter.type = type
+
+    const investees = await Investees.find(filter).lean()
+
+    return investees
+  } catch (err) {
+    console.error(' !! Could not fetch investees', err)
+    reply.internalServerError(err)
+  }
+}
+
+// --------------------
 export async function createInvestee (req, reply) {
   try {
     const file = await req.file()
@@ -15,7 +33,7 @@ export async function createInvestee (req, reply) {
 
     if (!investeeData || !investeeFile) return reply.badRequest('Missing investee data or file.')
 
-    const { name, type, investedAt, disinvestedAt, category, websiteUrl, headquarters, description = {} } = JSON.parse(file.fields?.investeeData?.value || '')
+    const { name, type, investedAt, disinvestedAt, websiteUrl, headquarters, description = {} } = JSON.parse(file.fields?.investeeData?.value || '')
 
     const isExistingInvestee = await Investees.exists({ name })
     if (isExistingInvestee) return reply.conflict('Investee already exists.')
@@ -32,7 +50,6 @@ export async function createInvestee (req, reply) {
       type,
       investedAt,
       disinvestedAt,
-      category,
       websiteUrl,
       logoUrl: uploadImageResult.secure_url,
       publicId: uploadImageResult.public_id,
