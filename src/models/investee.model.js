@@ -9,7 +9,7 @@ const newId = customAlphabet(config.nanoid.alphabet, config.nanoid.length)
 const InvesteeSchema = new Schema({
   _id: { type: String, default: () => newId() },
   name: { type: String, required: true },
-  type: { type: String, required: true },
+  type: { type: String, required: true, enum: ['startup', 'industry', 'realState', 'finance'] },
   investedAt: { type: String, required: true },
   disinvestedAt: { type: String },
   category: { type: String, required: true },
